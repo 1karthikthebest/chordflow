@@ -193,7 +193,7 @@ async function generateSong() {
   try {
 
     const prompt = `
-You are ChordFlow, an AI music assistant.
+You are KRIX-Flow, an AI music assistant.
 
 Song: ${song}
 Artist: ${artist}
@@ -215,7 +215,6 @@ Return ONLY JSON in this format:
   ]
 }
 
-Do not reproduce copyrighted song lyrics.
 Use labels such as [Verse], [Chorus], [Bridge].
 Focus on useful chord progressions.
 `;
