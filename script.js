@@ -1,14 +1,7 @@
-/* =========================================================
-   CHORDFLOW AI — COMPLETE SCRIPT
-========================================================= */
-
-
-/* =========================================================
-   GLOBAL VARIABLES
-========================================================= */
-
-let geminiApiKey = "";
-let geminiConnected = false;
+/* =====================================================
+   KRIX MUSIC
+   PART 1 / 2
+===================================================== */
 
 let transposeAmount = 0;
 
@@ -20,267 +13,64 @@ let recordingTimer = null;
 let recordingSeconds = 0;
 
 
-/* =========================================================
-   API KEY SHOW / HIDE
-========================================================= */
-
-function toggleApiKey() {
-
-  const input =
-    document.getElementById("apiKey");
-
-  const button =
-    document.querySelector(
-      ".api-wrapper .secondary-btn"
-    );
-
-  if (!input) return;
-
-  if (input.type === "password") {
-
-    input.type = "text";
-
-    if (button) {
-      button.textContent = "Hide";
-    }
-
-  } else {
-
-    input.type = "password";
-
-    if (button) {
-      button.textContent = "Show";
-    }
-  }
-}
-
-
-/* =========================================================
-   GEMINI CONNECTION
-========================================================= */
-
-async function connectGemini() {
-
-  const input =
-    document.getElementById("apiKey");
-
-  const button =
-    document.getElementById("connectButton");
-
-  const status =
-    document.getElementById("connectionStatus");
-
-  if (!input) return;
-
-  const key =
-    input.value.trim();
-
-  if (!key) {
-
-    if (status) {
-
-      status.style.display = "block";
-      status.style.color = "#ff6b81";
-      status.textContent =
-        "❌ Enter your Gemini API key.";
-    }
-
-    return;
-  }
-
-  if (button) {
-
-    button.disabled = true;
-    button.textContent =
-      "⏳ Connecting...";
-  }
-
-  if (status) {
-
-    status.style.display = "block";
-    status.style.color = "#8ea3c7";
-    status.textContent =
-      "🔄 Checking Gemini connection...";
-  }
-
-  try {
-
-    const response =
-      await fetch(
-        "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent",
-        {
-          method: "POST",
-
-          headers: {
-            "Content-Type": "application/json",
-            "x-goog-api-key": key
-          },
-
-          body: JSON.stringify({
-
-            contents: [
-              {
-                parts: [
-                  {
-                    text: "Reply with OK"
-                  }
-                ]
-              }
-            ]
-
-          })
-        }
-      );
-
-    const data =
-      await response.json();
-
-    if (!response.ok) {
-
-      throw new Error(
-        data?.error?.message ||
-        "Invalid Gemini API key."
-      );
-    }
-
-    geminiApiKey = key;
-    geminiConnected = true;
-
-    if (status) {
-
-      status.style.color = "#36e6a0";
-      status.textContent =
-        "✅ Gemini connected successfully!";
-    }
-
-    if (button) {
-
-      button.textContent =
-        "✅ Connected";
-
-      button.disabled = false;
-    }
-
-    const songSetup =
-      document.getElementById("songSetup");
-
-    const generateButton =
-      document.getElementById("generateButton");
-
-    if (songSetup) {
-      songSetup.style.display = "grid";
-    }
-
-    if (generateButton) {
-      generateButton.style.display = "block";
-    }
-
-  } catch (error) {
-
-    geminiConnected = false;
-    geminiApiKey = "";
-
-    if (status) {
-
-      status.style.display = "block";
-      status.style.color = "#ff6b81";
-      status.textContent =
-        "❌ " + error.message;
-    }
-
-    if (button) {
-
-      button.disabled = false;
-      button.textContent =
-        "🔌 Connect";
-    }
-  }
-}
-
-
-/* =========================================================
+/* =====================================================
    GENERATE SONG
-========================================================= */
+===================================================== */
 
 async function generateSong() {
 
-  if (!geminiConnected) {
-
-    alert(
-      "Connect your Gemini API first."
-    );
-
-    return;
-  }
-
   const song =
     document.getElementById("songName")
-      ?.value.trim();
+      .value.trim();
 
   const artist =
-    document.getElementById("singerName")
-      ?.value.trim();
+    document.getElementById("artistName")
+      .value.trim();
 
   const instrument =
     document.getElementById("instrument")
-      ?.value || "guitar";
+      .value;
 
-  if (!song) {
+  const lyrics =
+    document.getElementById("lyricsInput")
+      .value.trim();
 
-    alert("Enter the song name.");
-
-    return;
-  }
-
-  if (!artist) {
-
-    alert("Enter the singer/artist.");
-
-    return;
-  }
-
-  const workspace =
-    document.getElementById("workspace");
-
-  const content =
-    document.getElementById("songContent");
-
-  if (workspace) {
-    workspace.style.display = "block";
-  }
-
-  const outputSong =
-    document.getElementById("outputSong");
-
-  const outputArtist =
-    document.getElementById("outputArtist");
-
-  const outputInstrument =
+  const status =
     document.getElementById(
-      "outputInstrument"
+      "generationStatus"
     );
 
-  const sheetTitle =
-    document.getElementById("sheetTitle");
 
-  const sheetArtist =
-    document.getElementById("sheetArtist");
-
-  if (outputSong) {
-    outputSong.textContent = song;
+  if (!song) {
+    alert("Enter the song name.");
+    return;
   }
 
-  if (outputArtist) {
-    outputArtist.textContent = artist;
+
+  if (!artist) {
+    alert("Enter the artist.");
+    return;
   }
 
-  if (sheetTitle) {
-    sheetTitle.textContent = song;
-  }
 
-  if (sheetArtist) {
-    sheetArtist.textContent = artist;
-  }
+  status.textContent =
+    "✨ KRIX is creating your music...";
+
+
+  document.getElementById(
+    "workspace"
+  ).style.display = "block";
+
+
+  document.getElementById(
+    "outputSong"
+  ).textContent = song;
+
+
+  document.getElementById(
+    "outputArtist"
+  ).textContent = artist;
+
 
   const icons = {
 
@@ -293,287 +83,135 @@ async function generateSong() {
 
   };
 
-  if (outputInstrument) {
 
-    outputInstrument.textContent =
-      `${icons[instrument] || "🎵"} ${
-        instrument.charAt(0).toUpperCase() +
-        instrument.slice(1)
-      }`;
-  }
+  document.getElementById(
+    "outputInstrument"
+  ).textContent =
 
-  if (content) {
+    `${icons[instrument]} ${
+      instrument.charAt(0).toUpperCase()
+      + instrument.slice(1)
+    }`;
 
-    content.innerHTML = `
+
+  document.getElementById(
+    "sheetTitle"
+  ).textContent = song;
+
+
+  document.getElementById(
+    "sheetArtist"
+  ).textContent = artist;
+
+
+  document.getElementById(
+    "songContent"
+  ).innerHTML = `
+
+    <div class="empty-state">
+
+      <div class="empty-icon">
+        🪐
+      </div>
+
+      <p>
+        KRIX is generating...
+      </p>
+
+    </div>
+
+  `;
+
+
+  try {
+
+    const response =
+      await fetch(
+        "/api/generate",
+        {
+
+          method: "POST",
+
+          headers: {
+            "Content-Type":
+              "application/json"
+          },
+
+          body: JSON.stringify({
+
+            song: song,
+
+            artist: artist,
+
+            instrument: instrument,
+
+            lyrics: lyrics
+
+          })
+
+        }
+      );
+
+
+    const data =
+      await response.json();
+
+
+    if (!response.ok) {
+
+      throw new Error(
+        data.error ||
+        "KRIX generation failed."
+      );
+    }
+
+
+    displaySong(data);
+
+
+    status.textContent =
+      "✅ Generated by KRIX";
+
+
+  } catch (error) {
+
+    console.error(error);
+
+
+    document.getElementById(
+      "songContent"
+    ).innerHTML = `
+
       <div class="empty-state">
 
         <div class="empty-icon">
-          🪐
+          ⚠️
         </div>
 
         <p>
-          Gemini is generating your music...
+          KRIX generation backend
+          is not connected yet.
+        </p>
+
+        <p>
+          Use Demo Mode to test
+          the interface.
         </p>
 
       </div>
+
     `;
-  }
 
-  try {
 
-    const result =
-      await generateWithGemini(
-        song,
-        artist,
-        instrument
-      );
-
-    displaySong(result);
-
-  } catch (error) {
-
-    console.error(
-      "ChordFlow generation error:",
-      error
-    );
-
-    if (content) {
-
-      content.innerHTML = `
-        <div class="empty-state">
-
-          <div class="empty-icon">
-            ⚠️
-          </div>
-
-          <p>
-            Generation failed.
-          </p>
-
-          <p>
-            ${escapeHtml(error.message)}
-          </p>
-
-        </div>
-      `;
-    }
+    status.textContent =
+      "⚠️ KRIX backend unavailable.";
   }
 }
 
 
-/* =========================================================
-   GEMINI GENERATION
-========================================================= */
-
-async function generateWithGemini(
-  song,
-  artist,
-  instrument
-) {
-
-  const prompt = `
-
-You are ChordFlow AI, a music assistant.
-
-Song: ${song}
-Artist: ${artist}
-Instrument: ${instrument}
-
-Create a useful song arrangement.
-
-Return ONLY valid JSON.
-
-Use exactly this structure:
-
-{
-  "bpm": 100,
-  "key": "G",
-  "lines": [
-    {
-      "section": "Intro",
-      "chords": "G D Em C",
-      "lyrics": "Original lyrics or user-provided lyrics"
-    },
-    {
-      "section": "Verse 1",
-      "chords": "G D Em C",
-      "lyrics": "Original lyrics or user-provided lyrics"
-    },
-    {
-      "section": "Chorus",
-      "chords": "C G D Em",
-      "lyrics": "Original lyrics or user-provided lyrics"
-    }
-  ]
-}
-
-Important:
-
-- Return valid JSON only.
-- Do not use markdown code fences.
-- Do not add explanations before or after the JSON.
-- Every line must contain a chords field.
-- Every line must contain a lyrics field.
-- If lyrics are supplied by the user, use those lyrics.
-- Otherwise create ORIGINAL lyrics.
-- Do not reproduce copyrighted lyrics from the requested song.
-- Keep the arrangement practical for ${instrument}.
-`;
-
-  const response =
-    await fetch(
-      "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent",
-      {
-
-        method: "POST",
-
-        headers: {
-
-          "Content-Type":
-            "application/json",
-
-          "x-goog-api-key":
-            geminiApiKey
-        },
-
-        body: JSON.stringify({
-
-          contents: [
-
-            {
-              parts: [
-
-                {
-                  text: prompt
-                }
-
-              ]
-            }
-
-          ],
-
-          generationConfig: {
-
-            temperature: 0.6,
-
-            maxOutputTokens: 3000,
-
-            responseMimeType:
-              "application/json"
-          }
-
-        })
-      }
-    );
-
-  const data =
-    await response.json();
-
-  if (!response.ok) {
-
-    throw new Error(
-      data?.error?.message ||
-      "Gemini generation failed."
-    );
-  }
-
-  let text =
-    data?.candidates?.[0]
-      ?.content?.parts?.[0]
-      ?.text;
-
-  if (!text) {
-
-    throw new Error(
-      "Gemini returned an empty response."
-    );
-  }
-
-  console.log(
-    "Gemini raw response:",
-    text
-  );
-
-  /*
-    CLEAN GEMINI RESPONSE
-  */
-
-  text =
-    text
-      .replace(/```json/gi, "")
-      .replace(/```/g, "")
-      .trim();
-
-  /*
-    FIND JSON OBJECT
-
-    This prevents:
-    Unexpected end of JSON input
-  */
-
-  const firstBrace =
-    text.indexOf("{");
-
-  const lastBrace =
-    text.lastIndexOf("}");
-
-  if (
-    firstBrace === -1 ||
-    lastBrace === -1 ||
-    lastBrace <= firstBrace
-  ) {
-
-    throw new Error(
-      "Gemini did not return valid JSON."
-    );
-  }
-
-  text =
-    text.substring(
-      firstBrace,
-      lastBrace + 1
-    );
-
-  let result;
-
-  try {
-
-    result =
-      JSON.parse(text);
-
-  } catch (error) {
-
-    console.error(
-      "Invalid Gemini JSON:",
-      text
-    );
-
-    throw new Error(
-      "Gemini returned incomplete JSON. Please try again."
-    );
-  }
-
-  /*
-    VALIDATE RESULT
-  */
-
-  if (
-    !result ||
-    !Array.isArray(result.lines)
-  ) {
-
-    throw new Error(
-      "Gemini response has an invalid song format."
-    );
-  }
-
-  return result;
-}
-
-
-/* =========================================================
-   DISPLAY GENERATED SONG
-========================================================= */
+/* =====================================================
+   DISPLAY SONG
+===================================================== */
 
 function displaySong(data) {
 
@@ -582,136 +220,104 @@ function displaySong(data) {
       "songContent"
     );
 
-  if (!content) return;
 
   content.innerHTML = "";
 
-  const bpm =
-    document.getElementById("bpm");
 
-  if (bpm && data.bpm) {
+  document.getElementById(
+    "bpm"
+  ).textContent =
+    `${data.bpm || "--"} BPM`;
 
-    bpm.textContent =
-      `${data.bpm} BPM`;
-  }
 
-  const sheetArtist =
-    document.getElementById(
-      "sheetArtist"
-    );
+  document.getElementById(
+    "sheetArtist"
+  ).textContent =
 
-  const outputArtist =
-    document.getElementById(
+    `${document.getElementById(
       "outputArtist"
-    );
+    ).textContent} • Key: ${
+      data.key || "Unknown"
+    }`;
 
-  if (sheetArtist && data.key) {
-
-    const artist =
-      outputArtist
-        ?.textContent || "";
-
-    sheetArtist.textContent =
-      `${artist} • Key: ${data.key}`;
-  }
 
   if (
     !data.lines ||
-    data.lines.length === 0
+    !Array.isArray(data.lines)
   ) {
 
-    content.innerHTML = `
-
-      <div class="empty-state">
-
-        <div class="empty-icon">
-          🎵
-        </div>
-
-        <p>
-          No song data was returned.
-        </p>
-
-      </div>
-
-    `;
-
-    return;
+    throw new Error(
+      "Invalid KRIX response."
+    );
   }
 
+
   data.lines.forEach(
-    (line) => {
+    line => {
 
       const row =
         document.createElement(
           "div"
         );
 
+
       row.className =
         "song-line";
 
-      const section =
-        line.section ||
-        "Section";
-
-      const chords =
-        line.chords ||
-        "";
-
-      const lyrics =
-        line.lyrics ||
-        "";
 
       row.innerHTML = `
 
-        <div
-          class="song-section"
-        >
-          [${escapeHtml(section)}]
+        <div class="song-section">
+
+          [${escapeHtml(
+            line.section ||
+            "Section"
+          )}]
+
         </div>
 
-        <div
-          class="chords"
-        >
-          ${escapeHtml(chords)}
+
+        <div class="chords">
+
+          ${escapeHtml(
+            line.chords || ""
+          )}
+
         </div>
 
-        <div
-          class="lyrics"
-        >
-          ${escapeHtml(lyrics)}
+
+        <div class="lyrics">
+
+          ${escapeHtml(
+            line.lyrics || ""
+          )}
+
         </div>
 
       `;
 
+
       content.appendChild(row);
+
     }
   );
 
-  /*
-    Start with CHORDS view.
-  */
+
+  transposeAmount = 0;
+
+
+  document.getElementById(
+    "transposeValue"
+  ).textContent = "0";
+
 
   showMusicTab("chords");
-
-  const workspace =
-    document.getElementById(
-      "workspace"
-    );
-
-  if (workspace) {
-
-    workspace.scrollIntoView({
-      behavior: "smooth",
-      block: "start"
-    });
-  }
 }
 
 
-/* =========================================================
-   CHORDS / LYRICS TABS
-========================================================= */
+/* =====================================================
+   CHORDS / LYRICS
+===================================================== */
 
 function showMusicTab(type) {
 
@@ -720,90 +326,99 @@ function showMusicTab(type) {
       ".chords"
     );
 
+
   const lyrics =
     document.querySelectorAll(
       ".lyrics"
     );
 
-  const tabs =
-    document.querySelectorAll(
-      ".music-tab"
+
+  const chordsTab =
+    document.getElementById(
+      "chordsTab"
     );
 
-  tabs.forEach(
-    tab => {
 
-      tab.classList.remove(
-        "active"
-      );
-    }
+  const lyricsTab =
+    document.getElementById(
+      "lyricsTab"
+    );
+
+
+  chordsTab.classList.remove(
+    "active"
   );
 
-  /*
-    CHORDS TAB
-  */
 
-  if (type === "chords") {
+  lyricsTab.classList.remove(
+    "active"
+  );
 
-    chords.forEach(
-      element => {
 
-        element.style.display =
-          "block";
-      }
-    );
-
-    lyrics.forEach(
-      element => {
-
-        element.style.display =
-          "block";
-      }
-    );
-
-    if (tabs[0]) {
-
-      tabs[0].classList.add(
-        "active"
-      );
-    }
-  }
-
-  /*
-    LYRICS TAB
-  */
-
-  else if (type === "lyrics") {
+  if (type === "lyrics") {
 
     chords.forEach(
-      element => {
+      item => {
 
-        element.style.display =
+        item.style.display =
           "none";
+
       }
     );
+
 
     lyrics.forEach(
-      element => {
+      item => {
 
-        element.style.display =
+        item.style.display =
           "block";
+
       }
     );
 
-    if (tabs[1]) {
 
-      tabs[1].classList.add(
-        "active"
-      );
-    }
+    lyricsTab.classList.add(
+      "active"
+    );
+
+
+  } else {
+
+    /*
+      Chords view shows both
+      chords and lyrics.
+    */
+
+    chords.forEach(
+      item => {
+
+        item.style.display =
+          "block";
+
+      }
+    );
+
+
+    lyrics.forEach(
+      item => {
+
+        item.style.display =
+          "block";
+
+      }
+    );
+
+
+    chordsTab.classList.add(
+      "active"
+    );
   }
 }
 
 
-/* =========================================================
+/* =====================================================
    TRANSPOSE
-========================================================= */
+===================================================== */
 
 const chordMap = {
 
@@ -851,16 +466,19 @@ function transposeChord(
       /^([A-G](?:#|b)?)(.*)$/
     );
 
-  if (!match) {
 
+  if (!match) {
     return chord;
   }
+
 
   let root =
     match[1];
 
+
   const rest =
     match[2];
+
 
   const flats = {
 
@@ -872,23 +490,27 @@ function transposeChord(
 
   };
 
+
   if (root.includes("b")) {
 
     root =
       flats[root] || root;
   }
 
+
   if (!(root in chordMap)) {
 
     return chord;
   }
 
+
   let index =
-    chordMap[root] +
-    amount;
+    chordMap[root] + amount;
+
 
   index =
     ((index % 12) + 12) % 12;
+
 
   return (
     chordNames[index] +
@@ -897,300 +519,213 @@ function transposeChord(
 }
 
 
-function transposeSheet(
-  amount
-) {
+function transpose(amount) {
 
   transposeAmount += amount;
 
-  const chords =
-    document.querySelectorAll(
-      ".chords"
-    );
 
-  chords.forEach(
-    element => {
+  document
+    .querySelectorAll(".chords")
+    .forEach(
+      element => {
 
-      const original =
-        element.textContent.trim();
+        const words =
+          element.textContent
+            .trim()
+            .split(/\s+/);
 
-      if (!original) return;
 
-      const words =
-        original.split(/\s+/);
-
-      const newWords =
-        words.map(
-          word =>
-            transposeChord(
-              word,
-              amount
+        element.textContent =
+          words
+            .map(
+              chord =>
+                transposeChord(
+                  chord,
+                  amount
+                )
             )
-        );
+            .join(" ");
 
-      element.textContent =
-        newWords.join(" ");
-    }
-  );
-
-  const display =
-    document.getElementById(
-      "transposeValue"
+      }
     );
 
-  if (display) {
 
-    display.textContent =
-      transposeAmount > 0
-        ? `+${transposeAmount}`
-        : transposeAmount;
-  }
+  document.getElementById(
+    "transposeValue"
+  ).textContent =
+
+    transposeAmount > 0
+      ? `+${transposeAmount}`
+      : transposeAmount;
 }
 
 
-function transposeUp() {
-
-  transposeSheet(1);
-}
-
-
-function transposeDown() {
-
-  transposeSheet(-1);
-}
-
-
-/* =========================================================
+/* =====================================================
    COPY
-========================================================= */
+===================================================== */
 
-function copyChords() {
+function copySheet() {
 
   const title =
     document.getElementById(
       "sheetTitle"
-    )?.textContent || "";
+    ).textContent;
+
 
   const artist =
     document.getElementById(
       "sheetArtist"
-    )?.textContent || "";
+    ).textContent;
+
 
   const content =
     document.getElementById(
       "songContent"
-    )?.innerText || "";
-
-  const text =
-`${title}
-${artist}
-
-${content}`;
-
-  if (
-    navigator.clipboard &&
-    navigator.clipboard.writeText
-  ) {
-
-    navigator.clipboard
-      .writeText(text)
-      .then(() => {
-
-        showCopySuccess();
-
-      })
-      .catch(() => {
-
-        alert(
-          "Unable to copy."
-        );
-      });
-
-  } else {
-
-    alert(
-      "Clipboard is not supported."
-    );
-  }
-}
+    ).innerText;
 
 
-function showCopySuccess() {
-
-  const button =
-    document.getElementById(
-      "copyButton"
-    );
-
-  if (!button) return;
-
-  const oldText =
-    button.textContent;
-
-  button.textContent =
-    "✅ Copied!";
-
-  setTimeout(
-    () => {
-
-      button.textContent =
-        oldText;
-
-    },
-    1500
-  );
-}
+  navigator.clipboard
+    .writeText(
+      `${title}\n${artist}\n\n${content}`
+    )
 
 
-/* =========================================================
+    .then(() => {
+
+      alert(
+        "✅ KRIX sheet copied!"
+      );
+
+    })
+
+
+    .catch(() => {
+
+      alert(
+        "Unable to copy."
+      );
+
+    });
+}/* =====================================================
+   KRIX MUSIC
+   PART 2 / 2
+===================================================== */
+
+
+/* =====================================================
    DEMO MODE
-========================================================= */
+===================================================== */
 
 function loadDemo() {
 
-  const workspace =
-    document.getElementById(
-      "workspace"
-    );
+  const demoData = {
 
-  if (workspace) {
+    bpm: 92,
 
-    workspace.style.display =
-      "block";
-  }
-
-  const outputSong =
-    document.getElementById(
-      "outputSong"
-    );
-
-  const outputArtist =
-    document.getElementById(
-      "outputArtist"
-    );
-
-  const outputInstrument =
-    document.getElementById(
-      "outputInstrument"
-    );
-
-  const sheetTitle =
-    document.getElementById(
-      "sheetTitle"
-    );
-
-  const sheetArtist =
-    document.getElementById(
-      "sheetArtist"
-    );
-
-  const bpm =
-    document.getElementById(
-      "bpm"
-    );
-
-  if (outputSong) {
-
-    outputSong.textContent =
-      "ChordFlow Demo";
-  }
-
-  if (outputArtist) {
-
-    outputArtist.textContent =
-      "ChordFlow AI";
-  }
-
-  if (outputInstrument) {
-
-    outputInstrument.textContent =
-      "🎸 Guitar";
-  }
-
-  if (sheetTitle) {
-
-    sheetTitle.textContent =
-      "ChordFlow Demo";
-  }
-
-  if (sheetArtist) {
-
-    sheetArtist.textContent =
-      "ChordFlow AI • Key: G";
-  }
-
-  if (bpm) {
-
-    bpm.textContent =
-      "100 BPM";
-  }
-
-  displaySong({
-
-    bpm: 100,
-
-    key: "G",
+    key: "C",
 
     lines: [
 
       {
-        section: "Intro",
-        chords: "G D Em C",
-        lyrics:
-          "A new day begins"
+        section: "Verse",
+        chords: "C  G  Am  F",
+        lyrics: "Walking through the night, chasing every light"
       },
 
       {
         section: "Verse",
-        chords: "G D Em C",
-        lyrics:
-          "Walking through the night"
-      },
-
-      {
-        section: "Pre-Chorus",
-        chords: "Am Em C D",
-        lyrics:
-          "I can feel the light"
+        chords: "C  G  Am  F",
+        lyrics: "Every little dream is coming into sight"
       },
 
       {
         section: "Chorus",
-        chords: "C G D Em",
-        lyrics:
-          "We keep moving on"
+        chords: "F  G  C  Am",
+        lyrics: "We can fly, we can rise, we can touch the sky"
+      },
+
+      {
+        section: "Chorus",
+        chords: "F  G  C  C",
+        lyrics: "KRIX keeps the music alive"
       },
 
       {
         section: "Bridge",
-        chords: "Em C G D",
-        lyrics:
-          "Nothing can stop us"
+        chords: "Am  F  C  G",
+        lyrics: "Keep moving forward, never let it go"
       }
 
     ]
 
-  });
+  };
+
+
+  document.getElementById(
+    "songName"
+  ).value = "Midnight Dreams";
+
+
+  document.getElementById(
+    "artistName"
+  ).value = "KRIX Original";
+
+
+  document.getElementById(
+    "instrument"
+  ).value = "guitar";
+
+
+  document.getElementById(
+    "generationStatus"
+  ).textContent =
+    "✨ Demo loaded";
+
+
+  document.getElementById(
+    "workspace"
+  ).style.display = "block";
+
+
+  document.getElementById(
+    "outputSong"
+  ).textContent =
+    "Midnight Dreams";
+
+
+  document.getElementById(
+    "outputArtist"
+  ).textContent =
+    "KRIX Original";
+
+
+  document.getElementById(
+    "outputInstrument"
+  ).textContent =
+    "🎸 Guitar";
+
+
+  document.getElementById(
+    "sheetTitle"
+  ).textContent =
+    "Midnight Dreams";
+
+
+  displaySong(demoData);
+
+
+  document.getElementById(
+    "generationStatus"
+  ).textContent =
+    "✅ KRIX Demo Mode";
 }
 
 
-/* =========================================================
+/* =====================================================
    MICROPHONE
-========================================================= */
+===================================================== */
 
 async function requestMicrophone() {
-
-  if (
-    !navigator.mediaDevices ||
-    !navigator.mediaDevices.getUserMedia
-  ) {
-
-    alert(
-      "Your browser does not support microphone recording."
-    );
-
-    return false;
-  }
 
   try {
 
@@ -1200,63 +735,74 @@ async function requestMicrophone() {
           audio: true
         });
 
+
     mediaRecorder =
       new MediaRecorder(stream);
 
+
     audioChunks = [];
+
 
     mediaRecorder.ondataavailable =
       event => {
 
-        if (
-          event.data &&
-          event.data.size > 0
-        ) {
+        if (event.data.size > 0) {
 
           audioChunks.push(
             event.data
           );
-        }
-      };
 
-    mediaRecorder.onstop =
-      () => {
-
-        audioBlob =
-          new Blob(
-            audioChunks,
-            {
-              type:
-                "audio/webm"
-            }
-          );
-
-        const audioURL =
-          URL.createObjectURL(
-            audioBlob
-          );
-
-        const player =
-          document.getElementById(
-            "audioPlayer"
-          );
-
-        if (player) {
-
-          player.src =
-            audioURL;
-
-          player.style.display =
-            "block";
         }
 
-        stream
-          .getTracks()
-          .forEach(
-            track =>
-              track.stop()
-          );
       };
+
+
+    mediaRecorder.onstop = () => {
+
+      audioBlob =
+        new Blob(
+          audioChunks,
+          {
+            type:
+              mediaRecorder.mimeType ||
+              "audio/webm"
+          }
+        );
+
+
+      const audioURL =
+        URL.createObjectURL(
+          audioBlob
+        );
+
+
+      const audio =
+        document.getElementById(
+          "recordedAudio"
+        );
+
+
+      audio.src =
+        audioURL;
+
+
+      audio.style.display =
+        "block";
+
+
+      document.getElementById(
+        "downloadRecording"
+      ).style.display =
+        "inline-flex";
+
+
+      document.getElementById(
+        "deleteRecording"
+      ).style.display =
+        "inline-flex";
+
+    };
+
 
     return true;
 
@@ -1267,33 +813,50 @@ async function requestMicrophone() {
       error
     );
 
+
     alert(
-      "Microphone permission is required."
+      "🎤 Microphone permission is required to record."
     );
+
 
     return false;
   }
 }
 
 
-/* =========================================================
-   START / STOP RECORDING
-========================================================= */
+/* =====================================================
+   RECORDING
+===================================================== */
 
 async function toggleRecording() {
 
-  const button =
+  const recordButton =
     document.getElementById(
       "recordButton"
     );
 
+
+  /*
+    First click:
+    Ask for microphone permission.
+  */
+
   if (!mediaRecorder) {
 
-    const ready =
+    const allowed =
       await requestMicrophone();
 
-    if (!ready) return;
+
+    if (!allowed) {
+      return;
+    }
+
   }
+
+
+  /*
+    START RECORDING
+  */
 
   if (
     mediaRecorder.state ===
@@ -1302,192 +865,239 @@ async function toggleRecording() {
 
     audioChunks = [];
 
+
     mediaRecorder.start();
+
 
     recordingSeconds = 0;
 
-    startTimer();
 
-    if (button) {
+    updateTimer();
 
-      button.textContent =
-        "⏹ Stop Recording";
 
-      button.classList.add(
-        "recording"
-         } else {
-      stopRecording();
-    }
+    recordingTimer =
+      setInterval(
+        updateTimer,
+        1000
+      );
+
+
+    recordButton.textContent =
+      "⏹ Stop";
+
+
+    recordButton.classList.add(
+      "recording"
+    );
+
+
+    return;
+  }
+
+
+  /*
+    STOP RECORDING
+  */
+
+  if (
+    mediaRecorder.state ===
+    "recording"
+  ) {
+
+    mediaRecorder.stop();
+
+
+    clearInterval(
+      recordingTimer
+    );
+
+
+    recordButton.textContent =
+      "🎙 Record";
+
+
+    recordButton.classList.remove(
+      "recording"
+    );
+
   }
 }
 
 
-/* =========================================================
+/* =====================================================
    RECORDING TIMER
-========================================================= */
-
-function startTimer() {
-
-  clearInterval(recordingTimer);
-
-  updateTimer();
-
-  recordingTimer = setInterval(() => {
-
-    recordingSeconds++;
-
-    updateTimer();
-
-  }, 1000);
-}
-
+===================================================== */
 
 function updateTimer() {
 
   const timer =
-    document.getElementById("recordTimer");
+    document.getElementById(
+      "recordingTimer"
+    );
 
-  if (!timer) return;
 
   const minutes =
-    Math.floor(recordingSeconds / 60);
+    Math.floor(
+      recordingSeconds / 60
+    );
+
 
   const seconds =
     recordingSeconds % 60;
 
+
   timer.textContent =
     `${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
+
+
+  recordingSeconds++;
 }
 
 
-/* =========================================================
+/* =====================================================
    DOWNLOAD RECORDING
-========================================================= */
+===================================================== */
 
 function downloadRecording() {
 
   if (!audioBlob) {
 
-    alert("Record something first.");
+    alert(
+      "No recording available."
+    );
 
     return;
   }
 
+
   const url =
-    URL.createObjectURL(audioBlob);
+    URL.createObjectURL(
+      audioBlob
+    );
+
 
   const link =
-    document.createElement("a");
+    document.createElement(
+      "a"
+    );
+
 
   link.href = url;
 
-  link.download =
-    "chordflow-recording.webm";
 
-  document.body.appendChild(link);
+  link.download =
+    "KRIX-recording.webm";
+
+
+  document.body.appendChild(
+    link
+  );
+
 
   link.click();
 
+
   link.remove();
 
-  setTimeout(() => {
-    URL.revokeObjectURL(url);
-  }, 1000);
+
+  setTimeout(
+    () => URL.revokeObjectURL(url),
+    1000
+  );
 }
 
 
-/* =========================================================
+/* =====================================================
    DELETE RECORDING
-========================================================= */
+===================================================== */
 
 function deleteRecording() {
 
   audioBlob = null;
 
-  audioChunks = [];
 
-  const player =
-    document.getElementById("audioPlayer");
+  const audio =
+    document.getElementById(
+      "recordedAudio"
+    );
 
-  if (player) {
 
-    player.pause();
+  audio.pause();
 
-    player.src = "";
 
-    player.style.display = "none";
-  }
+  audio.removeAttribute(
+    "src"
+  );
+
+
+  audio.load();
+
+
+  audio.style.display =
+    "none";
+
+
+  document.getElementById(
+    "downloadRecording"
+  ).style.display =
+    "none";
+
+
+  document.getElementById(
+    "deleteRecording"
+  ).style.display =
+    "none";
+
+
+  document.getElementById(
+    "recordingTimer"
+  ).textContent =
+    "00:00";
+
 
   recordingSeconds = 0;
-
-  updateTimer();
 }
 
 
-/* =========================================================
-   ESCAPE HTML
-========================================================= */
+/* =====================================================
+   HTML ESCAPE
+===================================================== */
 
 function escapeHtml(value) {
 
-  if (
-    value === null ||
-    value === undefined
-  ) {
-
-    return "";
-  }
-
   return String(value)
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;")
-    .replace(/'/g, "&#039;");
+
+    .replace(
+      /&/g,
+      "&amp;"
+    )
+
+    .replace(
+      /</g,
+      "&lt;"
+    )
+
+    .replace(
+      />/g,
+      "&gt;"
+    )
+
+    .replace(
+      /"/g,
+      "&quot;"
+    )
+
+    .replace(
+      /'/g,
+      "&#039;"
+    );
 }
 
 
-/* =========================================================
-   PAGE INITIALIZATION
-========================================================= */
+/* =====================================================
+   KRIX READY
+===================================================== */
 
-document.addEventListener(
-  "DOMContentLoaded",
-  () => {
-
-    const songSetup =
-      document.getElementById("songSetup");
-
-    const generateButton =
-      document.getElementById("generateButton");
-
-    const workspace =
-      document.getElementById("workspace");
-
-    if (songSetup) {
-
-      songSetup.style.display = "none";
-    }
-
-    if (generateButton) {
-
-      generateButton.style.display = "none";
-    }
-
-    if (workspace) {
-
-      workspace.style.display = "none";
-    }
-
-    const tabs =
-      document.querySelectorAll(".music-tab");
-
-    if (tabs.length >= 2) {
-
-      tabs[0].classList.add("active");
-
-      tabs[1].classList.remove("active");
-    }
-
-  }
+console.log(
+  "🚀 KRIX Music Assistant loaded."
 );
