@@ -301,8 +301,23 @@ function displaySong(data) {
   }
 
   if (data.key) {
-    document.getElementById("sheetArtist").textContent +=
-      ` • Key: ${data.key}`;
+    const artist =
+      document.getElementById("outputArtist").textContent;
+
+    document.getElementById("sheetArtist").textContent =
+      `${artist} • Key: ${data.key}`;
+  }
+
+  if (!data.lines || data.lines.length === 0) {
+
+    content.innerHTML = `
+      <div class="empty-state">
+        <div class="empty-icon">🎵</div>
+        <p>No song data was returned.</p>
+      </div>
+    `;
+
+    return;
   }
 
   data.lines.forEach(line => {
@@ -312,29 +327,36 @@ function displaySong(data) {
 
     row.className = "song-line";
 
+    const section =
+      line.section || "Section";
+
+    const chords =
+      line.chords || "";
+
+    const lyrics =
+      line.lyrics || "";
+
     row.innerHTML = `
-      <div
-        class="lyrics"
-        style="
-          color:#9b5cff;
-          font-weight:800;
-          margin-bottom:6px;
-        "
-      >
-        [${line.section || "Section"}]
+
+      <div class="song-section">
+        [${escapeHtml(section)}]
       </div>
 
       <div class="chords">
-        ${line.chords || ""}
+        ${escapeHtml(chords)}
       </div>
 
       <div class="lyrics">
-        ${line.lyrics || ""}
+        ${escapeHtml(lyrics)}
       </div>
+
     `;
 
     content.appendChild(row);
   });
+
+  // Chords are shown first
+  showMusicTab("chords");
 
   document.getElementById("workspace")
     .scrollIntoView({
@@ -796,9 +818,14 @@ document.addEventListener(
 
 function showMusicTab(type) {
 
-  const chords = document.querySelectorAll(".chords");
-  const lyrics = document.querySelectorAll(".lyrics");
-  const tabs = document.querySelectorAll(".music-tab");
+  const chords =
+    document.querySelectorAll(".chords");
+
+  const lyrics =
+    document.querySelectorAll(".lyrics");
+
+  const tabs =
+    document.querySelectorAll(".music-tab");
 
   tabs.forEach(tab => {
     tab.classList.remove("active");
@@ -825,7 +852,7 @@ function showMusicTab(type) {
     });
 
     lyrics.forEach(el => {
-      el.style.display = "none";
+      el.style.display = "block";
     });
 
     if (tabs[0]) {
