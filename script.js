@@ -91,7 +91,7 @@ async function connectGemini() {
 
     status.style.color = "#36e6a0";
     status.textContent =
-      "✅ Gemini connected successfully!";
+      "✅ KRIX Connected Successfully!";
 
     button.textContent = "✅ Connected";
     button.disabled = false;
@@ -794,43 +794,43 @@ document.addEventListener(
 
   }
 );
+
 function showMusicTab(type) {
 
-  const chordElements =
-    document.querySelectorAll(".chords");
-
-  const lyricElements =
-    document.querySelectorAll(".lyrics");
-
-  const tabs =
-    document.querySelectorAll(".music-tab");
+  const chords = document.querySelectorAll(".chords");
+  const lyrics = document.querySelectorAll(".lyrics");
+  const tabs = document.querySelectorAll(".music-tab");
 
   tabs.forEach(tab => {
     tab.classList.remove("active");
   });
 
-  if (type === "chords") {
+  if (type === "lyrics") {
 
-    chordElements.forEach(el => {
-      el.style.display = "block";
-    });
-
-    lyricElements.forEach(el => {
+    chords.forEach(el => {
       el.style.display = "none";
     });
 
-    tabs[0].classList.add("active");
+    lyrics.forEach(el => {
+      el.style.display = "block";
+    });
+
+    if (tabs[1]) {
+      tabs[1].classList.add("active");
+    }
 
   } else {
 
-    chordElements.forEach(el => {
-      el.style.display = "none";
-    });
-
-    lyricElements.forEach(el => {
+    chords.forEach(el => {
       el.style.display = "block";
     });
 
-    tabs[1].classList.add("active");
+    lyrics.forEach(el => {
+      el.style.display = "none";
+    });
+
+    if (tabs[0]) {
+      tabs[0].classList.add("active");
+    }
   }
 }
