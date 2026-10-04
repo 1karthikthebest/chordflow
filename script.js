@@ -72,7 +72,7 @@ async function callGemini(prompt) {
         throw new Error("Please enter your Gemini API key first.");
     }
 
-    const model = "gemini-3.6-flash";
+    const model = "gemini-3.8-flash";
 
     const url =
         `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`;
