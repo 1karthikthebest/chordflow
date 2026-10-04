@@ -126,8 +126,11 @@ function stopLoading(button) {
    GEMINI CONFIG
    ========================================================= */
 
-const GEMINI_MODEL =
-    "gemini-3.8-flash";
+const GEMINI_MODELS = [
+    "gemini-3.8-flash",
+    "gemini-3.7-flash",
+    "gemini-3.6-flash"
+];
 
 const GEMINI_URL =
     `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent`;
@@ -140,99 +143,136 @@ const GEMINI_URL =
 async function callGemini(prompt) {
 
     if (!apiKey) {
-        throw new Error(
-            "Enter your Gemini API key first."
-        );
+        throw new Error("Enter your Gemini API key first.");
     }
 
-    const response = await fetch(
-        GEMINI_URL,
-        {
-            method: "POST",
+    let lastError = null;
 
-            headers: {
-                "Content-Type": "application/json",
-                "x-goog-api-key": apiKey
-            },
+    for (const model of GEMINI_MODELS) {
 
-            body: JSON.stringify({
+        const url =
+            `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`;
 
-                contents: [
-                    {
-                        role: "user",
+        try {
 
-                        parts: [
+            const response = await fetch(
+                url,
+                {
+                    method: "POST",
+
+                    headers: {
+                        "Content-Type": "application/json",
+                        "x-goog-api-key": apiKey
+                    },
+
+                    body: JSON.stringify({
+
+                        contents: [
                             {
-                                text: prompt
+                                role: "user",
+
+                                parts: [
+                                    {
+                                        text: prompt
+                                    }
+                                ]
                             }
-                        ]
-                    }
-                ],
+                        ],
 
-                generationConfig: {
-
-                    temperature: 0.2,
-
-                    responseMimeType:
-                        "application/json"
+                        generationConfig: {
+                            responseMimeType: "application/json"
+                        }
+                    })
                 }
-            })
+            );
+
+            let data;
+
+            try {
+                data = await response.json();
+            } catch {
+                throw new Error(
+                    "KRIX received an invalid response from Gemini."
+                );
+            }
+
+            if (!response.ok) {
+
+                const message =
+                    data?.error?.message ||
+                    `Gemini error ${response.status}`;
+
+                const temporary =
+                    response.status === 429 ||
+                    response.status === 503 ||
+                    /high demand|overload|capacity|temporarily|unavailable/i
+                        .test(message);
+
+                if (temporary) {
+                    console.warn(
+                        `${model} unavailable. Trying next model...`
+                    );
+
+                    lastError = new Error(message);
+                    continue;
+                }
+
+                throw new Error(message);
+            }
+
+            const text =
+                data?.candidates?.[0]
+                    ?.content?.parts
+                    ?.map(part => part.text || "")
+                    .join("")
+                    .trim();
+
+            if (!text) {
+                throw new Error(
+                    "Gemini returned no result."
+                );
+            }
+
+            try {
+
+                return JSON.parse(text);
+
+            } catch {
+
+                console.error(
+                    `${model} returned:`,
+                    text
+                );
+
+                throw new Error(
+                    "KRIX could not read Gemini's response."
+                );
+            }
+
+        } catch (error) {
+
+            lastError = error;
+
+            // Don't hide API-key or other permanent errors.
+            if (
+                !/high demand|overload|capacity|temporarily|unavailable/i
+                    .test(error.message)
+            ) {
+                throw error;
+            }
+
+            console.warn(
+                `${model} failed:`,
+                error.message
+            );
         }
+    }
+
+    throw new Error(
+        lastError?.message ||
+        "All KRIX Gemini models are currently unavailable. Please try again later."
     );
-
-
-    let data;
-
-    try {
-        data = await response.json();
-    } catch {
-        throw new Error(
-            "KRIX received an invalid response from Gemini."
-        );
-    }
-
-
-    if (!response.ok) {
-
-        const message =
-            data?.error?.message ||
-            `Gemini error ${response.status}`;
-
-        throw new Error(message);
-    }
-
-
-    const text =
-        data?.candidates?.[0]
-            ?.content?.parts
-            ?.map(part => part.text || "")
-            .join("")
-            .trim();
-
-
-    if (!text) {
-
-        throw new Error(
-            "Gemini returned no result."
-        );
-    }
-
-
-    try {
-
-        return JSON.parse(text);
-
-    } catch (error) {
-
-        console.error(
-            "Gemini returned:",
-            text
-        );
-
-        throw new Error(
-            "KRIX could not read Gemini's response."
-        );
-    }
+}
 }
 
 
