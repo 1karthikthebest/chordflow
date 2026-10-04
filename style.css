@@ -1,0 +1,1320 @@
+/* =========================================
+   CHORDFLOW — MUSIC × DEEP SPACE THEME
+========================================= */
+
+:root {
+  --bg: #030712;
+  --bg2: #071225;
+  --card: rgba(10, 20, 42, 0.72);
+  --card2: rgba(14, 27, 54, 0.85);
+  --border: rgba(100, 180, 255, 0.18);
+
+  --text: #f4f8ff;
+  --muted: #8ea3c7;
+
+  --blue: #4f8cff;
+  --cyan: #00e5ff;
+  --purple: #9b5cff;
+  --pink: #ff4fd8;
+
+  --danger: #ff4d6d;
+  --green: #36e6a0;
+
+  --shadow:
+    0 20px 60px rgba(0, 0, 0, 0.45);
+}
+
+
+/* =========================================
+   RESET
+========================================= */
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  min-height: 100vh;
+
+  color: var(--text);
+
+  font-family:
+    Inter,
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    sans-serif;
+
+  background:
+    radial-gradient(
+      circle at 15% 10%,
+      rgba(79, 140, 255, 0.16),
+      transparent 30%
+    ),
+    radial-gradient(
+      circle at 85% 20%,
+      rgba(155, 92, 255, 0.13),
+      transparent 28%
+    ),
+    radial-gradient(
+      circle at 50% 100%,
+      rgba(0, 229, 255, 0.08),
+      transparent 35%
+    ),
+    linear-gradient(
+      135deg,
+      var(--bg),
+      var(--bg2)
+    );
+
+  overflow-x: hidden;
+}
+
+
+/* =========================================
+   SPACE STARS
+========================================= */
+
+body::before {
+  content: "";
+
+  position: fixed;
+  inset: 0;
+
+  pointer-events: none;
+  z-index: -2;
+
+  background-image:
+    radial-gradient(circle, rgba(255,255,255,.8) 1px, transparent 1px),
+    radial-gradient(circle, rgba(100,200,255,.5) 1px, transparent 1px),
+    radial-gradient(circle, rgba(255,255,255,.35) 1px, transparent 1px);
+
+  background-size:
+    90px 90px,
+    150px 150px,
+    230px 230px;
+
+  background-position:
+    0 0,
+    40px 80px,
+    120px 30px;
+
+  opacity: 0.35;
+
+  animation: starsMove 35s linear infinite;
+}
+
+
+@keyframes starsMove {
+  from {
+    transform: translateY(0);
+  }
+
+  to {
+    transform: translateY(90px);
+  }
+}
+
+
+/* =========================================
+   NEBULA GLOW
+========================================= */
+
+body::after {
+  content: "";
+
+  position: fixed;
+  inset: -20%;
+
+  pointer-events: none;
+  z-index: -3;
+
+  background:
+    radial-gradient(
+      ellipse at 30% 40%,
+      rgba(79, 140, 255, 0.12),
+      transparent 40%
+    ),
+    radial-gradient(
+      ellipse at 70% 60%,
+      rgba(155, 92, 255, 0.10),
+      transparent 40%
+    );
+
+  filter: blur(50px);
+
+  animation: nebulaMove 15s ease-in-out infinite alternate;
+}
+
+
+@keyframes nebulaMove {
+  from {
+    transform: scale(1);
+  }
+
+  to {
+    transform: scale(1.08) translate(20px, -10px);
+  }
+}
+
+
+/* =========================================
+   TOPBAR
+========================================= */
+
+.topbar {
+  width: min(1150px, calc(100% - 32px));
+
+  margin: 0 auto;
+
+  padding: 25px 0;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+}
+
+
+.logo {
+  width: 48px;
+  height: 48px;
+
+  display: grid;
+  place-items: center;
+
+  border-radius: 15px;
+
+  font-size: 25px;
+
+  background:
+    linear-gradient(
+      135deg,
+      var(--blue),
+      var(--purple)
+    );
+
+  box-shadow:
+    0 0 30px rgba(79, 140, 255, 0.35);
+
+  animation: logoGlow 3s ease-in-out infinite alternate;
+}
+
+
+@keyframes logoGlow {
+  from {
+    box-shadow:
+      0 0 20px rgba(79, 140, 255, 0.25);
+  }
+
+  to {
+    box-shadow:
+      0 0 40px rgba(155, 92, 255, 0.5);
+  }
+}
+
+
+.brand h1 {
+  font-size: 21px;
+  letter-spacing: -0.5px;
+}
+
+
+.brand p {
+  margin-top: 2px;
+
+  color: var(--muted);
+
+  font-size: 12px;
+}
+
+
+/* =========================================
+   BUTTONS
+========================================= */
+
+button {
+  border: none;
+  cursor: pointer;
+
+  font: inherit;
+
+  transition:
+    transform .2s ease,
+    box-shadow .2s ease,
+    opacity .2s ease;
+}
+
+
+button:hover {
+  transform: translateY(-2px);
+}
+
+
+button:active {
+  transform: scale(.97);
+}
+
+
+.demo-btn,
+.generate-btn {
+  color: white;
+
+  background:
+    linear-gradient(
+      135deg,
+      var(--blue),
+      var(--purple)
+    );
+
+  box-shadow:
+    0 10px 30px rgba(79, 140, 255, .25);
+}
+
+
+.demo-btn {
+  padding: 11px 18px;
+
+  border-radius: 12px;
+
+  font-weight: 700;
+}
+
+
+.generate-btn {
+  width: 100%;
+
+  margin-top: 25px;
+
+  padding: 15px;
+
+  border-radius: 14px;
+
+  font-size: 15px;
+  font-weight: 800;
+}
+
+
+.generate-btn:hover,
+.demo-btn:hover {
+  box-shadow:
+    0 15px 40px rgba(79, 140, 255, .35);
+}
+
+
+/* =========================================
+   MAIN
+========================================= */
+
+main {
+  width: min(950px, calc(100% - 32px));
+
+  margin: 20px auto 60px;
+}
+
+
+.card {
+  position: relative;
+
+  padding: 28px;
+
+  margin-bottom: 24px;
+
+  border: 1px solid var(--border);
+
+  border-radius: 24px;
+
+  background:
+    linear-gradient(
+      145deg,
+      rgba(15, 30, 58, .8),
+      rgba(5, 13, 29, .72)
+    );
+
+  backdrop-filter: blur(18px);
+
+  box-shadow: var(--shadow);
+
+  overflow: hidden;
+}
+
+
+.card::before {
+  content: "";
+
+  position: absolute;
+
+  width: 180px;
+  height: 180px;
+
+  top: -100px;
+  right: -80px;
+
+  background:
+    radial-gradient(
+      circle,
+      rgba(0, 229, 255, .12),
+      transparent 70%
+    );
+
+  pointer-events: none;
+}
+
+
+/* =========================================
+   SECTION TITLE
+========================================= */
+
+.section-title {
+  display: flex;
+  align-items: center;
+
+  gap: 14px;
+
+  margin-bottom: 25px;
+}
+
+
+.section-title > span {
+  width: 42px;
+  height: 42px;
+
+  display: grid;
+  place-items: center;
+
+  border-radius: 12px;
+
+  background:
+    rgba(79, 140, 255, .12);
+
+  border:
+    1px solid rgba(79, 140, 255, .2);
+
+  font-size: 19px;
+}
+
+
+.section-title h2 {
+  font-size: 20px;
+}
+
+
+.section-title p {
+  margin-top: 4px;
+
+  color: var(--muted);
+
+  font-size: 13px;
+}
+
+
+/* =========================================
+   FORM
+========================================= */
+
+.form-grid {
+  display: grid;
+
+  grid-template-columns:
+    repeat(2, minmax(0, 1fr));
+
+  gap: 20px;
+}
+
+
+.input-group {
+  display: flex;
+  flex-direction: column;
+
+  gap: 8px;
+}
+
+
+.input-group label {
+  color: #c6d5ed;
+
+  font-size: 13px;
+
+  font-weight: 700;
+}
+
+
+input,
+select {
+  width: 100%;
+
+  padding: 13px 14px;
+
+  color: var(--text);
+
+  border: 1px solid var(--border);
+
+  border-radius: 12px;
+
+  outline: none;
+
+  background:
+    rgba(3, 10, 24, .75);
+
+  transition:
+    border .2s ease,
+    box-shadow .2s ease;
+}
+
+
+input::placeholder {
+  color: #617596;
+}
+
+
+input:focus,
+select:focus {
+  border-color: rgba(0, 229, 255, .65);
+
+  box-shadow:
+    0 0 0 3px rgba(0, 229, 255, .08),
+    0 0 25px rgba(0, 229, 255, .08);
+}
+
+
+select {
+  cursor: pointer;
+}
+
+
+select option {
+  background: #071225;
+  color: white;
+}
+
+
+/* =========================================
+   API KEY
+========================================= */
+
+.api-wrapper {
+  display: flex;
+
+  gap: 8px;
+}
+
+
+.api-wrapper input {
+  flex: 1;
+}
+
+
+.secondary-btn {
+  padding: 9px 13px;
+
+  color: #dceaff;
+
+  border:
+    1px solid rgba(100, 180, 255, .2);
+
+  border-radius: 10px;
+
+  background:
+    rgba(40, 70, 120, .25);
+}
+
+
+.secondary-btn:hover {
+  border-color:
+    rgba(0, 229, 255, .45);
+
+  background:
+    rgba(0, 229, 255, .08);
+}
+
+
+/* =========================================
+   WORKSPACE
+========================================= */
+
+.workspace {
+  animation:
+    workspaceIn .6s ease;
+}
+
+
+@keyframes workspaceIn {
+  from {
+    opacity: 0;
+    transform: translateY(15px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+
+.song-header {
+  display: flex;
+
+  justify-content: space-between;
+  align-items: center;
+
+  gap: 20px;
+
+  padding-bottom: 22px;
+
+  border-bottom:
+    1px solid var(--border);
+}
+
+
+.song-header h2 {
+  font-size: 25px;
+}
+
+
+.song-header p {
+  margin-top: 5px;
+
+  color: var(--muted);
+}
+
+
+.song-meta {
+  display: flex;
+
+  gap: 8px;
+
+  flex-wrap: wrap;
+
+  justify-content: flex-end;
+}
+
+
+.song-meta span {
+  padding: 7px 10px;
+
+  color: #bcd1f1;
+
+  border-radius: 9px;
+
+  background:
+    rgba(79, 140, 255, .1);
+
+  border:
+    1px solid rgba(79, 140, 255, .15);
+
+  font-size: 12px;
+}
+
+
+/* =========================================
+   CONTROLS
+========================================= */
+
+.controls {
+  display: flex;
+
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 15px;
+
+  padding: 18px 0;
+}
+
+
+.transpose {
+  display: flex;
+
+  align-items: center;
+
+  gap: 9px;
+
+  color: var(--muted);
+
+  font-size: 13px;
+}
+
+
+#transposeValue {
+  min-width: 25px;
+
+  text-align: center;
+
+  color: white;
+
+  font-weight: 800;
+}
+
+
+/* =========================================
+   TABS
+========================================= */
+
+.tabs {
+  display: flex;
+
+  gap: 7px;
+
+  margin-bottom: 20px;
+
+  padding: 5px;
+
+  border:
+    1px solid var(--border);
+
+  border-radius: 14px;
+
+  background:
+    rgba(0, 0, 0, .18);
+}
+
+
+.tab {
+  flex: 1;
+
+  padding: 11px;
+
+  color: var(--muted);
+
+  border-radius: 10px;
+
+  background: transparent;
+
+  font-weight: 700;
+}
+
+
+.tab:hover {
+  color: white;
+}
+
+
+.tab.active {
+  color: white;
+
+  background:
+    linear-gradient(
+      135deg,
+      rgba(79, 140, 255, .25),
+      rgba(155, 92, 255, .2)
+    );
+
+  box-shadow:
+    inset 0 0 0 1px rgba(100, 180, 255, .12);
+}
+
+
+/* =========================================
+   CHORD SHEET
+========================================= */
+
+.chord-sheet {
+  padding: 22px;
+
+  border:
+    1px solid rgba(100, 180, 255, .14);
+
+  border-radius: 17px;
+
+  background:
+    rgba(2, 8, 20, .65);
+}
+
+
+.sheet-header {
+  display: flex;
+
+  justify-content: space-between;
+  align-items: center;
+
+  gap: 15px;
+
+  padding-bottom: 18px;
+  margin-bottom: 20px;
+
+  border-bottom:
+    1px solid rgba(100, 180, 255, .12);
+}
+
+
+.sheet-header strong {
+  display: block;
+
+  font-size: 18px;
+}
+
+
+.sheet-header span {
+  color: var(--muted);
+
+  font-size: 12px;
+}
+
+
+.song-line {
+  padding: 17px 10px;
+
+  border-bottom:
+    1px solid rgba(255, 255, 255, .05);
+}
+
+
+.song-line:last-child {
+  border-bottom: none;
+}
+
+
+.chords {
+  margin-bottom: 7px;
+
+  color: var(--cyan);
+
+  font-family: monospace;
+
+  font-size: 14px;
+
+  font-weight: 800;
+
+  letter-spacing: .5px;
+}
+
+
+.lyrics {
+  color: #d8e4f7;
+
+  line-height: 1.7;
+
+  font-size: 15px;
+}
+
+
+/* =========================================
+   RECORDER
+========================================= */
+
+.recorder {
+  text-align: center;
+
+  padding: 35px 20px;
+}
+
+
+.record-icon {
+  width: 75px;
+  height: 75px;
+
+  display: grid;
+  place-items: center;
+
+  margin: 0 auto 20px;
+
+  border-radius: 50%;
+
+  background:
+    radial-gradient(
+      circle,
+      rgba(255, 77, 109, .2),
+      rgba(79, 140, 255, .08)
+    );
+
+  border:
+    1px solid rgba(255, 77, 109, .2);
+
+  font-size: 30px;
+
+  box-shadow:
+    0 0 40px rgba(255, 77, 109, .1);
+}
+
+
+.recorder h2 {
+  font-size: 20px;
+}
+
+
+.recorder > p {
+  margin-top: 7px;
+
+  color: var(--muted);
+
+  font-size: 13px;
+}
+
+
+#timer {
+  margin: 20px 0;
+
+  font-family: monospace;
+
+  font-size: 36px;
+
+  font-weight: 800;
+
+  letter-spacing: 2px;
+}
+
+
+/* =========================================
+   WAVEFORM
+========================================= */
+
+.waveform {
+  height: 70px;
+
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  gap: 4px;
+
+  margin: 10px auto 25px;
+}
+
+
+.waveform span {
+  width: 4px;
+
+  height: 20px;
+
+  border-radius: 10px;
+
+  background:
+    linear-gradient(
+      to top,
+      var(--blue),
+      var(--cyan)
+    );
+
+  opacity: .55;
+
+  animation:
+    wave 1s ease-in-out infinite;
+}
+
+
+.waveform span:nth-child(2) {
+  animation-delay: .1s;
+}
+
+.waveform span:nth-child(3) {
+  animation-delay: .2s;
+}
+
+.waveform span:nth-child(4) {
+  animation-delay: .3s;
+}
+
+.waveform span:nth-child(5) {
+  animation-delay: .4s;
+}
+
+.waveform span:nth-child(6) {
+  animation-delay: .5s;
+}
+
+.waveform span:nth-child(7) {
+  animation-delay: .6s;
+}
+
+.waveform span:nth-child(8) {
+  animation-delay: .7s;
+}
+
+.waveform span:nth-child(9) {
+  animation-delay: .8s;
+}
+
+.waveform span:nth-child(10) {
+  animation-delay: .9s;
+}
+
+
+@keyframes wave {
+  0%,
+  100% {
+    height: 15px;
+  }
+
+  50% {
+    height: 55px;
+  }
+}
+
+
+/* =========================================
+   RECORD BUTTON
+========================================= */
+
+.record-btn {
+  padding: 14px 22px;
+
+  color: white;
+
+  border-radius: 14px;
+
+  background:
+    linear-gradient(
+      135deg,
+      #ff405f,
+      #c92855
+    );
+
+  box-shadow:
+    0 10px 30px rgba(255, 64, 95, .2);
+
+  font-weight: 800;
+}
+
+
+.record-btn:hover {
+  box-shadow:
+    0 15px 40px rgba(255, 64, 95, .3);
+}
+
+
+.audio-player {
+  width: min(500px, 100%);
+
+  display: none;
+
+  margin: 25px auto 0;
+}
+
+
+.record-actions {
+  display: none;
+
+  justify-content: center;
+
+  gap: 10px;
+
+  margin-top: 15px;
+}
+
+
+.danger-btn {
+  padding: 9px 13px;
+
+  color: #ffb1bd;
+
+  border:
+    1px solid rgba(255, 77, 109, .25);
+
+  border-radius: 10px;
+
+  background:
+    rgba(255, 77, 109, .08);
+}
+
+
+.danger-btn:hover {
+  background:
+    rgba(255, 77, 109, .15);
+}
+
+
+/* =========================================
+   TIPS
+========================================= */
+
+.tips-card {
+  padding-bottom: 20px;
+}
+
+
+.tip {
+  display: flex;
+
+  align-items: flex-start;
+
+  gap: 12px;
+
+  padding: 13px 0;
+
+  border-bottom:
+    1px solid rgba(255, 255, 255, .05);
+}
+
+
+.tip:last-child {
+  border-bottom: none;
+}
+
+
+.tip > span {
+  font-size: 17px;
+}
+
+
+.tip p {
+  color: #b8c8e2;
+
+  line-height: 1.55;
+
+  font-size: 13px;
+}
+
+
+/* =========================================
+   FOOTER
+========================================= */
+
+footer {
+  width: min(950px, calc(100% - 32px));
+
+  margin: 0 auto 35px;
+
+  display: flex;
+
+  justify-content: space-between;
+
+  gap: 15px;
+
+  color: #64799c;
+
+  font-size: 11px;
+}
+
+
+/* =========================================
+   SHOOTING STAR
+========================================= */
+
+@keyframes shootingStar {
+  0% {
+    transform:
+      translate(0, 0)
+      rotate(-25deg);
+
+    opacity: 0;
+  }
+
+  10% {
+    opacity: 1;
+  }
+
+  60% {
+    opacity: 1;
+  }
+
+  100% {
+    transform:
+      translate(500px, 300px)
+      rotate(-25deg);
+
+    opacity: 0;
+  }
+}
+
+
+/* =========================================
+   SCROLLBAR
+========================================= */
+
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+
+::-webkit-scrollbar-track {
+  background: #020711;
+}
+
+
+::-webkit-scrollbar-thumb {
+  border-radius: 10px;
+
+  background:
+    linear-gradient(
+      var(--blue),
+      var(--purple)
+    );
+}
+
+
+/* =========================================
+   SELECTION
+========================================= */
+
+::selection {
+  color: white;
+
+  background:
+    rgba(79, 140, 255, .4);
+}
+
+
+/* =========================================
+   MOBILE
+========================================= */
+
+@media (max-width: 700px) {
+
+  .topbar {
+    width: min(100% - 22px, 950px);
+
+    padding-top: 18px;
+  }
+
+
+  main {
+    width: calc(100% - 22px);
+
+    margin-top: 10px;
+  }
+
+
+  .card {
+    padding: 20px;
+
+    border-radius: 20px;
+  }
+
+
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
+
+
+  .song-header {
+    align-items: flex-start;
+
+    flex-direction: column;
+  }
+
+
+  .song-meta {
+    justify-content: flex-start;
+  }
+
+
+  .controls {
+    align-items: flex-start;
+
+    flex-direction: column;
+  }
+
+
+  .transpose {
+    width: 100%;
+
+    justify-content: space-between;
+  }
+
+
+  .tabs {
+    flex-direction: column;
+  }
+
+
+  .chord-sheet {
+    padding: 15px;
+  }
+
+
+  .sheet-header {
+    align-items: flex-start;
+
+    flex-direction: column;
+  }
+
+
+  .api-wrapper {
+    flex-direction: column;
+  }
+
+
+  .api-wrapper .secondary-btn {
+    width: 100%;
+  }
+
+
+  footer {
+    width: calc(100% - 22px);
+
+    align-items: center;
+
+    flex-direction: column;
+
+    text-align: center;
+  }
+
+
+  .brand h1 {
+    font-size: 18px;
+  }
+
+
+  .demo-btn {
+    padding: 9px 12px;
+
+    font-size: 12px;
+  }
+
+}
+
+
+/* =========================================
+   PRINT
+========================================= */
+
+@media print {
+
+  body {
+    color: black;
+
+    background: white;
+  }
+
+
+  .topbar,
+  .setup-card,
+  .controls,
+  .tabs,
+  .recorder,
+  .tips-card,
+  footer {
+    display: none !important;
+  }
+
+
+  .workspace {
+    display: block !important;
+
+    border: none;
+
+    box-shadow: none;
+  }
+
+
+  .chord-sheet {
+    border: none;
+
+    background: white;
+  }
+
+
+  .chords {
+    color: black;
+  }
+
+
+  .lyrics {
+    color: black;
+  }
+
+}
