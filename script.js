@@ -794,3 +794,43 @@ document.addEventListener(
 
   }
 );
+function showMusicTab(type) {
+
+  const chordElements =
+    document.querySelectorAll(".chords");
+
+  const lyricElements =
+    document.querySelectorAll(".lyrics");
+
+  const tabs =
+    document.querySelectorAll(".music-tab");
+
+  tabs.forEach(tab => {
+    tab.classList.remove("active");
+  });
+
+  if (type === "chords") {
+
+    chordElements.forEach(el => {
+      el.style.display = "block";
+    });
+
+    lyricElements.forEach(el => {
+      el.style.display = "none";
+    });
+
+    tabs[0].classList.add("active");
+
+  } else {
+
+    chordElements.forEach(el => {
+      el.style.display = "none";
+    });
+
+    lyricElements.forEach(el => {
+      el.style.display = "block";
+    });
+
+    tabs[1].classList.add("active");
+  }
+}
