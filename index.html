@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>ChordFlow — AI Music Assistant</title>
+
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+  <!-- =========================
+       TOP NAVIGATION
+  ========================== -->
+
+  <header class="topbar">
+
+    <div class="brand">
+      <div class="logo">♪</div>
+
+      <div>
+        <h1>ChordFlow</h1>
+        <p>AI Music Assistant</p>
+      </div>
+    </div>
+
+    <button class="demo-btn" onclick="loadDemo()">
+      Try Demo
+    </button>
+
+  </header>
+
+
+  <main>
+
+    <!-- =========================
+         SETUP SECTION
+    ========================== -->
+
+    <section class="card setup-card">
+
+      <div class="section-title">
+        <span>🚀</span>
+
+        <div>
+          <h2>Create Your Chord Sheet</h2>
+          <p>Turn any song into chords and lyrics</p>
+        </div>
+      </div>
+
+
+      <div class="form-grid">
+
+        <!-- API KEY -->
+
+        <div class="input-group">
+
+          <label for="apiKey">
+            API Key
+          </label>
+
+          <div class="api-wrapper">
+
+            <input
+              type="password"
+              id="apiKey"
+              placeholder="Enter your API key"
+            >
+
+            <button
+              type="button"
+              class="secondary-btn"
+              onclick="toggleApiKey()"
+            >
+              Show
+            </button>
+
+          </div>
+
+        </div>
+
+
+        <!-- SONG -->
+
+        <div class="input-group">
+
+          <label for="songName">
+            Song
+          </label>
+
+          <input
+            type="text"
+            id="songName"
+            placeholder="Enter song name"
+          >
+
+        </div>
+
+
+        <!-- SINGER -->
+
+        <div class="input-group">
+
+          <label for="singerName">
+            Singer / Artist
+          </label>
+
+          <input
+            type="text"
+            id="singerName"
+            placeholder="Enter singer name"
+          >
+
+        </div>
+
+
+        <!-- INSTRUMENT -->
+
+        <div class="input-group">
+
+          <label for="instrument">
+            Instrument
+          </label>
+
+          <select id="instrument">
+
+            <option value="guitar">
+              🎸 Guitar
+            </option>
+
+            <option value="piano">
+              🎹 Piano
+            </option>
+
+            <option value="flute">
+              🪈 Flute
+            </option>
+
+            <option value="ukulele">
+              🎵 Ukulele
+            </option>
+
+            <option value="violin">
+              🎻 Violin
+            </option>
+
+            <option value="keyboard">
+              🎹 Keyboard
+            </option>
+
+          </select>
+
+        </div>
+
+      </div>
+
+
+      <!-- GENERATE -->
+
+      <button
+        class="generate-btn"
+        onclick="generateSong()"
+      >
+        ✨ Generate Chords
+      </button>
+
+    </section>
+
+
+
+    <!-- =========================
+         WORKSPACE
+    ========================== -->
+
+    <section
+      class="card workspace"
+      id="workspace"
+      style="display: none;"
+    >
+
+      <!-- SONG HEADER -->
+
+      <div class="song-header">
+
+        <div>
+
+          <h2 id="outputSong">
+            Song Name
+          </h2>
+
+          <p id="outputArtist">
+            Artist
+          </p>
+
+        </div>
+
+
+        <div class="song-meta">
+
+          <span id="outputInstrument">
+            🎸 Guitar
+          </span>
+
+          <span id="bpm">
+            100 BPM
+          </span>
+
+        </div>
+
+      </div>
+
+
+
+      <!-- CONTROLS -->
+
+      <div class="controls">
+
+        <div class="transpose">
+
+          <span>
+            Transpose
+          </span>
+
+          <button
+            class="secondary-btn"
+            onclick="transpose(-1)"
+          >
+            −
+          </button>
+
+          <span id="transposeValue">
+            0
+          </span>
+
+          <button
+            class="secondary-btn"
+            onclick="transpose(1)"
+          >
+            +
+          </button>
+
+        </div>
+
+
+        <button
+          class="secondary-btn"
+          onclick="copyChords()"
+        >
+          📋 Copy
+        </button>
+
+      </div>
+
+
+
+      <!-- TABS -->
+
+      <div class="tabs">
+
+        <button
+          class="tab active"
+          onclick="showTab('chordsTab', this)"
+        >
+          🎸 Chords & Lyrics
+        </button>
+
+        <button
+          class="tab"
+          onclick="showTab('recorderTab', this)"
+        >
+          🎙️ Recorder
+        </button>
+
+      </div>
+
+
+
+      <!-- =========================
+           CHORD TAB
+      ========================== -->
+
+      <div
+        id="chordsTab"
+        class="tab-content"
+      >
+
+        <div class="chord-sheet">
+
+          <div class="sheet-header">
+
+            <div>
+              <strong id="sheetTitle">
+                Song
+              </strong>
+
+              <span id="sheetArtist">
+                Artist
+              </span>
+            </div>
+
+            <span>
+              ChordFlow AI
+            </span>
+
+          </div>
+
+
+          <!-- SONG LINES -->
+
+          <div id="songContent">
+
+            <div class="song-line">
+
+              <div class="chords">
+                G &nbsp;&nbsp;&nbsp; D &nbsp;&nbsp;&nbsp; Em &nbsp;&nbsp;&nbsp; C
+              </div>
+
+              <div class="lyrics">
+                Your generated lyrics will appear here
+              </div>
+
+            </div>
+
+
+            <div class="song-line">
+
+              <div class="chords">
+                G &nbsp;&nbsp;&nbsp; D &nbsp;&nbsp;&nbsp; C
+              </div>
+
+              <div class="lyrics">
+                Generate a song to see the chord progression
+              </div>
+
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+
+
+      <!-- =========================
+           RECORDER TAB
+      ========================== -->
+
+      <div
+        id="recorderTab"
+        class="tab-content"
+        style="display: none;"
+      >
+
+        <div class="recorder">
+
+          <div class="record-icon">
+            🎙️
+          </div>
+
+
+          <h2>
+            Record Your Performance
+          </h2>
+
+
+          <p>
+            Record yourself playing the song.
+          </p>
+
+
+          <div id="timer">
+            00:00
+          </div>
+
+
+          <!-- WAVEFORM -->
+
+          <div class="waveform">
+
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+
+          </div>
+
+
+          <!-- RECORD BUTTON -->
+
+          <button
+            id="recordButton"
+            class="record-btn"
+            onclick="toggleRecording()"
+          >
+            🔴 Start Recording
+          </button>
+
+
+          <!-- AUDIO -->
+
+          <audio
+            id="audioPlayer"
+            class="audio-player"
+            controls
+          ></audio>
+
+
+          <div class="record-actions">
+
+            <button
+              class="secondary-btn"
+              onclick="downloadRecording()"
+            >
+              ⬇️ Download
+            </button>
+
+            <button
+              class="danger-btn"
+              onclick="deleteRecording()"
+            >
+              🗑️ Delete
+            </button>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </section>
+
+
+
+    <!-- =========================
+         TIPS
+    ========================== -->
+
+    <section class="card tips-card">
+
+      <div class="section-title">
+
+        <span>💡</span>
+
+        <div>
+          <h2>Tips</h2>
+          <p>Get better results from ChordFlow</p>
+        </div>
+
+      </div>
+
+
+      <div class="tip">
+        <span>🎵</span>
+        <p>
+          Enter the exact song name and artist for better chord accuracy.
+        </p>
+      </div>
+
+
+      <div class="tip">
+        <span>🎸</span>
+        <p>
+          Choose your instrument to get more suitable chord arrangements.
+        </p>
+      </div>
+
+
+      <div class="tip">
+        <span>🎙️</span>
+        <p>
+          Use the recorder to practice and listen back to your performance.
+        </p>
+      </div>
+
+    </section>
+
+  </main>
+
+
+
+  <!-- =========================
+       FOOTER
+  ========================== -->
+
+  <footer>
+
+    <p>
+      © 2026 ChordFlow
+    </p>
+
+    <p>
+      Built with AI • Music • Code
+    </p>
+
+  </footer>
+
+
+  <!-- JAVASCRIPT -->
+
+  <script src="script.js"></script>
+
+</body>
+</html>
