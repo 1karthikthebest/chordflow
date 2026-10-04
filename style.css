@@ -1832,3 +1832,38 @@ footer {
   }
 
 }
+/* CHORDS / LYRICS SPLIT TABS */
+
+.music-tabs {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin: 20px 0;
+}
+
+.music-tab {
+  padding: 18px 12px;
+  border: 1px solid rgba(120, 150, 255, 0.25);
+  border-radius: 16px;
+  background: rgba(25, 45, 90, 0.65);
+  color: #aebddd;
+  font-size: 18px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.music-tab.active {
+  background: linear-gradient(
+    135deg,
+    #243b76,
+    #34205f
+  );
+  color: white;
+  border-color: #806cff;
+  box-shadow: 0 0 20px rgba(100, 80, 255, 0.25);
+}
+
+.music-tab:hover {
+  transform: translateY(-2px);
+}
