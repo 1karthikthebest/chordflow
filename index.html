@@ -1,635 +1,407 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <meta
-    name="viewport"
-    content="width=device-width, initial-scale=1.0"
-  >
+  <title>KRIX Music</title>
 
-  <title>KRIX-Flow — AI Music Assistant</title>
-
-  <link
-    rel="stylesheet"
-    href="style.css"
-  >
-
+  <link rel="stylesheet" href="style.css">
 </head>
-
 
 <body>
 
+<header class="topbar">
 
-  <!-- =========================================
-       TOP NAVIGATION
-  ========================================== -->
+  <div class="brand">
+    <div class="logo">K</div>
 
-  <header class="topbar">
+    <div>
+      <h1>KRIX</h1>
+      <p>AI Music Assistant</p>
+    </div>
+  </div>
 
-    <div class="brand">
+  <button class="demo-btn" onclick="loadDemo()">
+    Demo
+  </button>
 
-      <div class="logo">
-        ♪
-      </div>
+</header>
+
+
+<main>
+
+  <!-- SETUP -->
+
+  <section class="card">
+
+    <div class="section-title">
+
+      <span>🎵</span>
 
       <div>
+        <h2>Create Your Music</h2>
+        <p>Build a personalized chord sheet with KRIX</p>
+      </div>
 
-        <h1>
-          KRIX-Flow
-        </h1>
+    </div>
 
-        <p>
-          AI Music Assistant
-        </p>
+
+    <div class="form-grid">
+
+      <div class="input-group">
+
+        <label>🎵 Song Name</label>
+
+        <input
+          id="songName"
+          type="text"
+          placeholder="Enter song name"
+        >
+
+      </div>
+
+
+      <div class="input-group">
+
+        <label>🎤 Artist</label>
+
+        <input
+          id="artistName"
+          type="text"
+          placeholder="Enter artist"
+        >
+
+      </div>
+
+
+      <div class="input-group">
+
+        <label>🎸 Instrument</label>
+
+        <select id="instrument">
+
+          <option value="guitar">🎸 Guitar</option>
+          <option value="piano">🎹 Piano</option>
+          <option value="flute">🪈 Flute</option>
+          <option value="ukulele">🎵 Ukulele</option>
+          <option value="violin">🎻 Violin</option>
+          <option value="keyboard">🎹 Keyboard</option>
+
+        </select>
+
+      </div>
+
+
+      <div class="input-group full-width">
+
+        <label>
+          📝 Lyrics
+          <span class="optional">
+            Optional
+          </span>
+        </label>
+
+        <textarea
+          id="lyricsInput"
+          rows="6"
+          placeholder="Paste lyrics you own or have permission to use..."
+        ></textarea>
 
       </div>
 
     </div>
 
 
+    <button
+      class="generate-btn"
+      onclick="generateSong()"
+    >
+      ✨ Generate with KRIX
+    </button>
 
-  </header>
+    <div id="generationStatus"></div>
 
-
-
-  <!-- =========================================
-       MAIN
-  ========================================== -->
-
-  <main>
-
-
-    <!-- =========================================
-         SETUP CARD
-    ========================================== -->
-
-    <section class="card setup-card">
+  </section>
 
 
-      <div class="section-title">
+  <!-- WORKSPACE -->
 
-        <span>
-          🚀
+  <section
+    id="workspace"
+    class="card workspace"
+  >
+
+    <div class="song-header">
+
+      <div>
+
+        <h2 id="outputSong">
+          Song
+        </h2>
+
+        <p id="outputArtist">
+          Artist
+        </p>
+
+      </div>
+
+
+      <div class="song-meta">
+
+        <span id="outputInstrument">
+          🎸 Guitar
         </span>
 
-        <div>
-
-          <h2>
-            Create Your Chord Sheet
-          </h2>
-
-          <p>
-            Connect KRIX before creating your song
-          </p>
-
-        </div>
+        <span id="bpm">
+          -- BPM
+        </span>
 
       </div>
 
+    </div>
 
 
-      <!-- =======================================
-           API KEY
-      ======================================== -->
+    <!-- CONTROLS -->
 
-      <div class="input-group">
+    <div class="controls">
 
-        <label for="apiKey">
-          🔑 KRIX API Key
-        </label>
+      <div class="transpose">
 
-
-        <div class="api-wrapper">
-
-          <input
-            type="password"
-            id="apiKey"
-            placeholder="Paste your KRIX API key"
-            autocomplete="off"
-          >
-
-
-          <button
-            type="button"
-            class="secondary-btn"
-            onclick="toggleApiKey()"
-          >
-            Show
-          </button>
-
-        </div>
-
-
-        <!-- CONNECT -->
+        <span>Transpose</span>
 
         <button
-          type="button"
-          class="connect-btn"
-          id="connectButton"
-          onclick="connectGemini()"
+          class="secondary-btn small-btn"
+          onclick="transpose(-1)"
         >
-          🔌 Connect
+          −
         </button>
 
+        <strong id="transposeValue">
+          0
+        </strong>
 
-        <!-- STATUS -->
-
-        <div
-          id="connectionStatus"
-          class="connection-status"
-        ></div>
-
-      </div>
-
-
-
-      <!-- =======================================
-           SONG SETUP
-           HIDDEN UNTIL API CONNECTS
-      ======================================== -->
-
-      <div
-        class="form-grid"
-        id="songSetup"
-      >
-
-
-        <!-- SONG -->
-
-        <div class="input-group">
-
-          <label for="songName">
-            🎵 Song
-          </label>
-
-          <input
-            type="text"
-            id="songName"
-            placeholder="Enter song name"
-          >
-
-        </div>
-
-
-
-        <!-- SINGER -->
-
-        <div class="input-group">
-
-          <label for="singerName">
-            🎤 Singer / Artist
-          </label>
-
-          <input
-            type="text"
-            id="singerName"
-            placeholder="Enter singer name"
-          >
-
-        </div>
-
-
-
-        <!-- INSTRUMENT -->
-
-        <div class="input-group">
-
-          <label for="instrument">
-            🎸 Instrument
-          </label>
-
-          <select id="instrument">
-
-            <option value="guitar">
-              🎸 Guitar
-            </option>
-
-            <option value="piano">
-              🎹 Piano
-            </option>
-
-            <option value="flute">
-              🪈 Flute
-            </option>
-
-            <option value="ukulele">
-              🎵 Ukulele
-            </option>
-
-            <option value="violin">
-              🎻 Violin
-            </option>
-
-            <option value="keyboard">
-              🎹 Keyboard
-            </option>
-
-          </select>
-
-        </div>
-
+        <button
+          class="secondary-btn small-btn"
+          onclick="transpose(1)"
+        >
+          +
+        </button>
 
       </div>
 
-
-
-      <!-- =======================================
-           GENERATE
-      ======================================== -->
 
       <button
-        class="generate-btn"
-        id="generateButton"
-        onclick="generateSong()"
+        class="secondary-btn"
+        onclick="copySheet()"
       >
-        ✨ Generate Chords
+        📋 Copy
+      </button>
+
+    </div>
+
+
+    <!-- CHORDS / LYRICS -->
+
+    <div class="music-tabs">
+
+      <button
+        id="chordsTab"
+        class="music-tab active"
+        onclick="showMusicTab('chords')"
+      >
+        🎸 Chords
       </button>
 
 
-    </section>
+      <button
+        id="lyricsTab"
+        class="music-tab"
+        onclick="showMusicTab('lyrics')"
+      >
+        🎤 Lyrics
+      </button>
+
+    </div>
 
 
+    <!-- SHEET -->
 
-    <!-- =========================================
-         WORKSPACE
-    ========================================== -->
+    <div class="chord-sheet">
 
-    <section
-      class="card workspace"
-      id="workspace"
-    >
-
-
-      <!-- =======================================
-           SONG HEADER
-      ======================================== -->
-
-      <div class="song-header">
+      <div class="sheet-header">
 
         <div>
 
-          <h2 id="outputSong">
-            Song Name
-          </h2>
+          <strong id="sheetTitle">
+            Song
+          </strong>
 
-          <p id="outputArtist">
+          <span id="sheetArtist">
             Artist
-          </p>
+          </span>
 
         </div>
 
+        <span>
+          KRIX
+        </span>
 
-        <div class="song-meta">
+      </div>
 
-          <span id="outputInstrument">
-            🎸 Guitar
-          </span>
 
-          <span id="bpm">
-            -- BPM
-          </span>
+      <div id="songContent">
+
+        <div class="empty-state">
+
+          <div class="empty-icon">
+            🎵
+          </div>
+
+          <p>
+            Generate a song with KRIX.
+          </p>
 
         </div>
 
       </div>
 
+    </div>
 
 
-      <!-- =======================================
-           CONTROLS
-      ======================================== -->
+    <!-- RECORDER -->
 
-      <div class="controls">
+    <div class="mini-recorder">
 
+      <div class="recorder-header">
 
-        <div class="transpose">
+        <strong>
+          🎙️ Record Your Performance
+        </strong>
 
-          <span>
-            Transpose
-          </span>
+        <span id="recordTimer">
+          00:00
+        </span>
 
-
-          <button
-            class="secondary-btn small-btn"
-            onclick="transpose(-1)"
-          >
-            −
-          </button>
+      </div>
 
 
-          <span id="transposeValue">
-            0
-          </span>
+      <div class="waveform">
+
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+
+      </div>
 
 
-          <button
-            class="secondary-btn small-btn"
-            onclick="transpose(1)"
-          >
-            +
-          </button>
+      <button
+        id="recordButton"
+        class="record-btn"
+        onclick="toggleRecording()"
+      >
+        🔴 Start Recording
+      </button>
 
-        </div>
+
+      <audio
+        id="audioPlayer"
+        controls
+      ></audio>
 
 
+      <div
+        id="recordActions"
+        class="record-actions"
+      >
 
         <button
           class="secondary-btn"
-          onclick="copyChords()"
+          onclick="downloadRecording()"
         >
-          📋 Copy
+          ⬇️ Download
         </button>
-
-
-      </div>
-
-
-
-      <!-- =======================================
-           CHORDS TAB
-      ======================================== -->
-
-      <div class="music-tabs">
-
-  <button class="music-tab active" onclick="showMusicTab('chords')">
-    🎸 Chords
-  </button>
-
-  <button class="music-tab" onclick="showMusicTab('lyrics')">
-    🎤 Lyrics
-  </button>
-
-</div>
-
-      <!-- =======================================
-           CHORD SHEET
-      ======================================== -->
-
-      <div class="chord-sheet">
-
-
-        <div class="sheet-header">
-
-          <div>
-
-            <strong id="sheetTitle">
-              Song
-            </strong>
-
-            <span id="sheetArtist">
-              Artist
-            </span>
-
-          </div>
-
-
-          <span>
-            ChordFlow AI
-          </span>
-
-        </div>
-
-
-
-        <!-- GENERATED CONTENT -->
-
-        <div id="songContent">
-
-          <div class="empty-state">
-
-            <div class="empty-icon">
-              🎵
-            </div>
-
-            <p>
-              Generate a song to see its chord progression.
-            </p>
-
-          </div>
-
-        </div>
-
-
-      </div>
-
-
-
-      <!-- =======================================
-           MINI RECORDER
-           DIRECTLY UNDER CHORDS
-      ======================================== -->
-
-      <div class="mini-recorder">
-
-
-        <div class="mini-recorder-header">
-
-
-          <div>
-
-            <strong>
-              🎙️ Record Your Performance
-            </strong>
-
-            <p>
-              
-            </p>
-
-          </div>
-
-
-          <div
-            id="timer"
-            class="mini-timer"
-          >
-            00:00
-          </div>
-
-
-        </div>
-
-
-
-        <!-- WAVEFORM -->
-
-        <div class="waveform mini-waveform">
-
-          <span></span>
-          <span></span>
-          <span></span>
-          <span></span>
-          <span></span>
-          <span></span>
-          <span></span>
-          <span></span>
-          <span></span>
-          <span></span>
-          <span></span>
-          <span></span>
-
-        </div>
-
-
-
-        <!-- RECORD -->
 
         <button
-          id="recordButton"
-          class="record-btn"
-          onclick="toggleRecording()"
+          class="danger-btn"
+          onclick="deleteRecording()"
         >
-          🔴 Start Recording
+          🗑️ Delete
         </button>
 
-
-
-        <!-- AUDIO -->
-
-        <audio
-          id="audioPlayer"
-          class="audio-player"
-          controls
-        ></audio>
-
-
-
-        <!-- ACTIONS -->
-
-        <div
-          id="recordActions"
-          class="record-actions"
-        >
-
-          <button
-            class="secondary-btn"
-            onclick="downloadRecording()"
-          >
-            ⬇️ Download
-          </button>
-
-
-          <button
-            class="danger-btn"
-            onclick="deleteRecording()"
-          >
-            🗑️ Delete
-          </button>
-
-        </div>
-
-
       </div>
 
+    </div>
 
-    </section>
-
-
-
-    <!-- =========================================
-         TIPS
-    ========================================== -->
-
-    <section class="card tips-card">
+  </section>
 
 
-      <div class="section-title">
+  <!-- TIPS -->
 
-        <span>
-          💡
-        </span>
+  <section class="card">
 
-        <div>
+    <div class="section-title">
 
-          <h2>
-            Tips
-          </h2>
+      <span>💡</span>
 
-          <p>
-            Get better results from KRIX- Flow
-          </p>
-
-        </div>
-
+      <div>
+        <h2>KRIX Tips</h2>
+        <p>Get better results</p>
       </div>
 
+    </div>
 
 
-      <div class="tip">
-
-        <span>
-          🎵
-        </span>
-
-        <p>
-          Enter the exact song name and artist for better results.
-        </p>
-
-      </div>
+    <div class="tip">
+      🎵
+      <p>
+        Enter the exact song and artist.
+      </p>
+    </div>
 
 
-
-      <div class="tip">
-
-        <span>
-          🎸
-        </span>
-
-        <p>
-          Choose your instrument to get a suitable arrangement.
-        </p>
-
-      </div>
+    <div class="tip">
+      🎸
+      <p>
+        Select the instrument you want to play.
+      </p>
+    </div>
 
 
+    <div class="tip">
+      🎤
+      <p>
+        Provide lyrics you own or have permission to use
+        for accurate chord alignment.
+      </p>
+    </div>
 
-      <div class="tip">
+  </section>
 
-        <span>
-          🎙️
-        </span>
-
-        <p>
-          The recorder stays directly below the chord sheet while you practice.
-        </p>
-
-      </div>
-
-
-    </section>
+</main>
 
 
-  </main>
+<footer>
+
+  <span>
+    © 2026 KRIX
+  </span>
+
+  <span>
+    Music • AI • Creativity
+  </span>
+
+</footer>
 
 
-
-  <!-- =========================================
-       FOOTER
-  ========================================== -->
-
-  <footer>
-
-    <p>
-      © 2026 KRIX-Flow by Karthik 
-    </p>
-
-    <p>
-      AI • Music • Code
-    </p>
-
-  </footer>
-
-
-
-  <!-- =========================================
-       JAVASCRIPT
-  ========================================== -->
-
-  <script src="script.js?v=3"></script>
-
+<script src="script.js?v=1"></script>
 
 </body>
-
 </html>
