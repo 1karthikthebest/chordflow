@@ -1,85 +1,169 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
+
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
 
   <title>ChordFlow — AI Music Assistant</title>
 
-  <link rel="stylesheet" href="style.css">
+  <link
+    rel="stylesheet"
+    href="style.css"
+  >
+
 </head>
+
 
 <body>
 
-  <!-- =========================
+
+  <!-- =====================================
        TOP NAVIGATION
-  ========================== -->
+  ====================================== -->
 
   <header class="topbar">
 
     <div class="brand">
-      <div class="logo">♪</div>
+
+      <div class="logo">
+        ♪
+      </div>
 
       <div>
-        <h1>ChordFlow</h1>
-        <p>AI Music Assistant</p>
+
+        <h1>
+          ChordFlow
+        </h1>
+
+        <p>
+          AI Music Assistant
+        </p>
+
       </div>
+
     </div>
 
-    <button class="demo-btn" onclick="loadDemo()">
+
+    <button
+      class="demo-btn"
+      onclick="loadDemo()"
+    >
       Try Demo
     </button>
 
   </header>
 
 
+
   <main>
 
-    <!-- =========================
-         SETUP SECTION
-    ========================== -->
+
+    <!-- =====================================
+         API + SONG SETUP
+    ====================================== -->
 
     <section class="card setup-card">
 
+
       <div class="section-title">
-        <span>🚀</span>
+
+        <span>
+          🚀
+        </span>
 
         <div>
-          <h2>Create Your Chord Sheet</h2>
-          <p>Turn any song into chords and lyrics</p>
+
+          <h2>
+            Create Your Chord Sheet
+          </h2>
+
+          <p>
+            Connect Gemini before creating your song
+          </p>
+
         </div>
+
       </div>
 
 
-      <div class="form-grid">
 
-        <!-- API KEY -->
+      <!-- =================================
+           API KEY
+      ================================== -->
 
-        <div class="input-group">
+      <div class="input-group">
 
-          <label for="apiKey">
-            API Key
-          </label>
+        <label for="apiKey">
+          🔑 Gemini API Key
+        </label>
 
-          <div class="api-wrapper">
 
-            <input
-              type="password"
-              id="apiKey"
-              placeholder="Enter your API key"
-            >
+        <div class="api-wrapper">
 
-            <button
-              type="button"
-              class="secondary-btn"
-              onclick="toggleApiKey()"
-            >
-              Show
-            </button>
+          <input
+            type="password"
+            id="apiKey"
+            placeholder="Paste your Gemini API key"
+            autocomplete="off"
+          >
 
-          </div>
+
+          <button
+            type="button"
+            class="secondary-btn"
+            onclick="toggleApiKey()"
+          >
+            Show
+          </button>
 
         </div>
+
+
+        <!-- CONNECT BUTTON -->
+
+        <button
+          type="button"
+          class="generate-btn"
+          id="connectButton"
+          onclick="connectGemini()"
+          style="margin-top: 8px;"
+        >
+          🔌 Connect
+        </button>
+
+
+        <!-- CONNECTION STATUS -->
+
+        <div
+          id="connectionStatus"
+          style="
+            display:none;
+            margin-top:10px;
+            font-size:13px;
+            font-weight:700;
+          "
+        ></div>
+
+      </div>
+
+
+
+      <!-- =================================
+           SONG SETUP
+           HIDDEN UNTIL API CONNECTS
+      ================================== -->
+
+      <div
+        class="form-grid"
+        id="songSetup"
+        style="display:none;"
+      >
 
 
         <!-- SONG -->
@@ -87,7 +171,7 @@
         <div class="input-group">
 
           <label for="songName">
-            Song
+            🎵 Song
           </label>
 
           <input
@@ -99,12 +183,13 @@
         </div>
 
 
+
         <!-- SINGER -->
 
         <div class="input-group">
 
           <label for="singerName">
-            Singer / Artist
+            🎤 Singer / Artist
           </label>
 
           <input
@@ -116,12 +201,13 @@
         </div>
 
 
+
         <!-- INSTRUMENT -->
 
         <div class="input-group">
 
           <label for="instrument">
-            Instrument
+            🎸 Instrument
           </label>
 
           <select id="instrument">
@@ -154,35 +240,46 @@
 
         </div>
 
+
       </div>
 
 
-      <!-- GENERATE -->
+
+      <!-- =================================
+           GENERATE BUTTON
+      ================================== -->
 
       <button
         class="generate-btn"
+        id="generateButton"
         onclick="generateSong()"
+        style="display:none;"
       >
         ✨ Generate Chords
       </button>
+
 
     </section>
 
 
 
-    <!-- =========================
-         WORKSPACE
-    ========================== -->
+    <!-- =====================================
+         GENERATED WORKSPACE
+    ====================================== -->
 
     <section
       class="card workspace"
       id="workspace"
-      style="display: none;"
+      style="display:none;"
     >
 
-      <!-- SONG HEADER -->
+
+      <!-- =================================
+           SONG HEADER
+      ================================== -->
 
       <div class="song-header">
+
 
         <div>
 
@@ -209,19 +306,24 @@
 
         </div>
 
+
       </div>
 
 
 
-      <!-- CONTROLS -->
+      <!-- =================================
+           CONTROLS
+      ================================== -->
 
       <div class="controls">
+
 
         <div class="transpose">
 
           <span>
             Transpose
           </span>
+
 
           <button
             class="secondary-btn"
@@ -230,9 +332,11 @@
             −
           </button>
 
+
           <span id="transposeValue">
             0
           </span>
+
 
           <button
             class="secondary-btn"
@@ -244,6 +348,7 @@
         </div>
 
 
+
         <button
           class="secondary-btn"
           onclick="copyChords()"
@@ -251,11 +356,14 @@
           📋 Copy
         </button>
 
+
       </div>
 
 
 
-      <!-- TABS -->
+      <!-- =================================
+           CHORDS TAB
+      ================================== -->
 
       <div class="tabs">
 
@@ -266,31 +374,27 @@
           🎸 Chords & Lyrics
         </button>
 
-        <button
-          class="tab"
-          onclick="showTab('recorderTab', this)"
-        >
-          🎙️ Recorder
-        </button>
-
       </div>
 
 
-
-      <!-- =========================
-           CHORD TAB
-      ========================== -->
 
       <div
         id="chordsTab"
         class="tab-content"
       >
 
+
+        <!-- =================================
+             CHORD SHEET
+        ================================== -->
+
         <div class="chord-sheet">
+
 
           <div class="sheet-header">
 
             <div>
+
               <strong id="sheetTitle">
                 Song
               </strong>
@@ -298,7 +402,9 @@
               <span id="sheetArtist">
                 Artist
               </span>
+
             </div>
+
 
             <span>
               ChordFlow AI
@@ -307,85 +413,73 @@
           </div>
 
 
-          <!-- SONG LINES -->
+
+          <!-- GENERATED SONG CONTENT -->
 
           <div id="songContent">
 
-            <div class="song-line">
-
-              <div class="chords">
-                G &nbsp;&nbsp;&nbsp; D &nbsp;&nbsp;&nbsp; Em &nbsp;&nbsp;&nbsp; C
-              </div>
-
-              <div class="lyrics">
-                Your generated lyrics will appear here
-              </div>
-
-            </div>
-
 
             <div class="song-line">
 
               <div class="chords">
-                G &nbsp;&nbsp;&nbsp; D &nbsp;&nbsp;&nbsp; C
+                G &nbsp;&nbsp;&nbsp;
+                D &nbsp;&nbsp;&nbsp;
+                Em &nbsp;&nbsp;&nbsp;
+                C
               </div>
 
+
               <div class="lyrics">
-                Generate a song to see the chord progression
+                Your generated chord sheet will appear here.
               </div>
 
             </div>
+
 
           </div>
+
 
         </div>
 
-      </div>
 
 
+        <!-- =================================
+             MINI RECORDER
+             DIRECTLY UNDER SONG
+        ================================== -->
 
-      <!-- =========================
-           RECORDER TAB
-      ========================== -->
+        <div class="mini-recorder">
 
-      <div
-        id="recorderTab"
-        class="tab-content"
-        style="display: none;"
-      >
 
-        <div class="recorder">
+          <div class="mini-recorder-header">
 
-          <div class="record-icon">
-            🎙️
+
+            <div>
+
+              <strong>
+                🎙️ Record Your Performance
+              </strong>
+
+              <p>
+                Keep the chords and lyrics visible while you play.
+              </p>
+
+            </div>
+
+
+            <span id="timer">
+              00:00
+            </span>
+
+
           </div>
 
-
-          <h2>
-            Record Your Performance
-          </h2>
-
-
-          <p>
-            Record yourself playing the song.
-          </p>
-
-
-          <div id="timer">
-            00:00
-          </div>
 
 
           <!-- WAVEFORM -->
 
-          <div class="waveform">
+          <div class="mini-waveform waveform">
 
-            <span></span>
-            <span></span>
-            <span></span>
-            <span></span>
-            <span></span>
-            <span></span>
             <span></span>
             <span></span>
             <span></span>
@@ -397,6 +491,7 @@
             <span></span>
 
           </div>
+
 
 
           <!-- RECORD BUTTON -->
@@ -410,7 +505,8 @@
           </button>
 
 
-          <!-- AUDIO -->
+
+          <!-- AUDIO PLAYER -->
 
           <audio
             id="audioPlayer"
@@ -419,7 +515,11 @@
           ></audio>
 
 
+
+          <!-- RECORD ACTIONS -->
+
           <div class="record-actions">
+
 
             <button
               class="secondary-btn"
@@ -428,6 +528,7 @@
               ⬇️ Download
             </button>
 
+
             <button
               class="danger-btn"
               onclick="deleteRecording()"
@@ -435,66 +536,100 @@
               🗑️ Delete
             </button>
 
+
           </div>
+
 
         </div>
 
+
       </div>
+
 
     </section>
 
 
 
-    <!-- =========================
+    <!-- =====================================
          TIPS
-    ========================== -->
+    ====================================== -->
 
     <section class="card tips-card">
 
+
       <div class="section-title">
 
-        <span>💡</span>
+        <span>
+          💡
+        </span>
 
         <div>
-          <h2>Tips</h2>
-          <p>Get better results from ChordFlow</p>
+
+          <h2>
+            Tips
+          </h2>
+
+          <p>
+            Get better results from ChordFlow
+          </p>
+
         </div>
 
       </div>
 
 
+
       <div class="tip">
-        <span>🎵</span>
+
+        <span>
+          🎵
+        </span>
+
         <p>
           Enter the exact song name and artist for better chord accuracy.
         </p>
+
       </div>
+
 
 
       <div class="tip">
-        <span>🎸</span>
+
+        <span>
+          🎸
+        </span>
+
         <p>
-          Choose your instrument to get more suitable chord arrangements.
+          Choose your instrument to get a suitable arrangement.
         </p>
+
       </div>
+
 
 
       <div class="tip">
-        <span>🎙️</span>
+
+        <span>
+          🎙️
+        </span>
+
         <p>
-          Use the recorder to practice and listen back to your performance.
+          Keep the generated chords visible while recording your performance.
         </p>
+
       </div>
+
 
     </section>
+
 
   </main>
 
 
 
-  <!-- =========================
+  <!-- =====================================
        FOOTER
-  ========================== -->
+  ====================================== -->
 
   <footer>
 
@@ -509,9 +644,14 @@
   </footer>
 
 
-  <!-- JAVASCRIPT -->
+
+  <!-- =====================================
+       JAVASCRIPT
+  ====================================== -->
 
   <script src="script.js"></script>
 
+
 </body>
+
 </html>
